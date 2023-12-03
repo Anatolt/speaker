@@ -1,0 +1,95 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Multilingual Text-to-Speech with Voice Selection for Each Language</title>
+</head>
+<body>
+    <h2>Text-to-Speech Demo</h2>
+    <br>
+Скрипт озвучивает текст на двух языках. <br>
+Скрипт умеет в русский и английский.<br>
+Вставь текст на двух языках и нажми read text.<br>
+<br>
+    <textarea id="textToRead" rows="4" cols="50"></textarea><br>
+    <label for="russianVoiceSelect">Russian Voice:</label>
+    <select id="russianVoiceSelect"></select><br>
+    <label for="englishVoiceSelect">English Voice:</label>
+    <select id="englishVoiceSelect"></select><br>
+    <button onclick="speak()">Read Text</button>
+    <button onclick="stopSpeaking()">Stop</button>
+
+    <script>
+        var isSpeaking = false;
+        var voices = [];
+
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+
+            var russianVoices = voices.filter(voice => voice.lang.startsWith('ru'));
+            var englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+
+            var russianSelect = document.getElementById('russianVoiceSelect');
+            var englishSelect = document.getElementById('englishVoiceSelect');
+
+            russianVoices.forEach(voice => {
+                var option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = voice.name;
+                russianSelect.appendChild(option);
+            });
+
+            englishVoices.forEach(voice => {
+                var option = document.createElement('option');
+                option.value = voice.name;
+                option.textContent = voice.name;
+                englishSelect.appendChild(option);
+            });
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function speak() {
+            if(isSpeaking) return;
+            isSpeaking = true;
+            var text = document.getElementById('textToRead').value;
+            var sentences = text.split(/(?<=[.!?])\s/);
+
+            function speakSentence(index) {
+                if (index >= sentences.length || !isSpeaking) {
+                    isSpeaking = false;
+                    return;
+                }
+
+                var sentence = sentences[index];
+                var msg = new SpeechSynthesisUtterance(sentence);
+
+                if (/[а-яА-ЯЁё]/.test(sentence)) {
+                    var russianVoiceName = document.getElementById('russianVoiceSelect').value;
+                    msg.voice = voices.find(voice => voice.name === russianVoiceName);
+                } else {
+                    var englishVoiceName = document.getElementById('englishVoiceSelect').value;
+                    msg.voice = voices.find(voice => voice.name === englishVoiceName);
+                }
+
+                msg.onend = function() {
+                    speakSentence(index + 1);
+                };
+
+                window.speechSynthesis.speak(msg);
+            }
+
+            speakSentence(0);
+        }
+
+        function stopSpeaking() {
+            window.speechSynthesis.cancel();
+            isSpeaking = false;
+        }
+
+        loadVoices(); // Загружаем голоса при запуске
+    </script>
+
+</body>
+</html>
