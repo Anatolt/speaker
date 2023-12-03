@@ -1,4 +1,4 @@
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Multilingual Text-to-Speech with Voice Selection for Each Language</title>
@@ -10,7 +10,16 @@
 Скрипт умеет в русский и английский.<br>
 Вставь текст на двух языках и нажми read text.<br>
 <br>
-    <textarea id="textToRead" rows="4" cols="50"></textarea><br>
+    <textarea id="textToRead" rows="4" cols="50">
+Neural networks are a fundamental part of artificial intelligence.
+Нейронные сети являются фундаментальной частью искусственного интеллекта.
+They are designed to simulate the way a human brain processes information.
+Они разработаны для имитации способа обработки информации человеческим мозгом.
+These networks can learn and recognize patterns from data.
+Эти сети могут обучаться и распознавать образцы на основе данных.
+Neural networks are used in various applications, such as image and speech recognition.
+Нейронные сети используются в различных приложениях, таких как распознавание изображений и речи.
+    </textarea><br>
     <label for="russianVoiceSelect">Russian Voice:</label>
     <select id="russianVoiceSelect"></select><br>
     <label for="englishVoiceSelect">English Voice:</label>
@@ -90,6 +99,5 @@
 
         loadVoices(); // Загружаем голоса при запуске
     </script>
-
 </body>
 </html>
